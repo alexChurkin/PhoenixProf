@@ -1,1 +1,1 @@
-# PhoenixProf - Universal Intel Profiler
+# PhoenixProf - Advanced Intel Profiler
