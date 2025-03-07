@@ -50,5 +50,5 @@ nmake
 ```
 Use this command line to run the application:
 ```sh
-cl_gemm.exe [cpu|gpu|cpugpu] [matrix_size] [repeats_count]
+cl_gemm.exe [cpu|gpu|cpugpu] [matrix_size] [repeat_count]
 ```
