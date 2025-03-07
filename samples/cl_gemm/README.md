@@ -2,17 +2,17 @@
 ## Overview
 This sample application performs general matrix multiplication using OpenCL(TM) CPU or GPU device, so it can be used as a target for OpenCL(TM) profiling and tracing tools.
 ```
-OpenCL Matrix Multiplication (matrix size: 1024 x 1024, repeats 4 times)
-Target device: Intel(R) Gen9 HD Graphics NEO
-Matrix multiplication time: 0.18465 sec
-Results are CORRECT with accuracy: 4.90573e-06
-Matrix multiplication time: 0.1293 sec
-Results are CORRECT with accuracy: 4.90573e-06
-Matrix multiplication time: 0.103855 sec
-Results are CORRECT with accuracy: 4.90573e-06
-Matrix multiplication time: 0.0909481 sec
-Results are CORRECT with accuracy: 4.90573e-06
-Total execution time: 0.739879 sec
+OpenCL Matrix Multiplication (matrix size: 512 x 512, repeats 4 times)
+Target device: Intel(R) Arc(TM) Graphics
+Matrix multiplication time: 0.0030474 sec
+Results are CORRECT with accuracy: 2.26974e-06
+Matrix multiplication time: 0.00130562 sec
+Results are CORRECT with accuracy: 2.26974e-06
+Matrix multiplication time: 0.0012725 sec
+Results are CORRECT with accuracy: 2.26974e-06
+Matrix multiplication time: 0.00184469 sec
+Results are CORRECT with accuracy: 2.26974e-06
+Total execution time: 0.0264119 sec
 ```
 ## Supported OS
 - Linux
@@ -52,3 +52,5 @@ Use this command line to run the application:
 ```sh
 cl_gemm.exe [cpu|gpu|cpugpu] [matrix_size] [repeat_count]
 ```
+
+#### cpugpu mode runs the app on cpu and then on gpu
