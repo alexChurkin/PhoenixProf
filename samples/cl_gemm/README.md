@@ -53,4 +53,4 @@ Use this command line to run the application:
 cl_gemm.exe [cpu|gpu|cpugpu] [matrix_size] [repeat_count]
 ```
 
-#### cpugpu mode runs the app on cpu and then on gpu
+#### cpugpu mode runs the app on cpu, and then on gpu.
