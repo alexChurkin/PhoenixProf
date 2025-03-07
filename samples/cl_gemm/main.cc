@@ -31,7 +31,7 @@ const char* kKernelSource =
   "}";
 
 static float Check(const std::vector<float>& a, float value) {
-  PHPROF_ASSERT(value > MAX_EPS);
+  ASSERT(value > MAX_EPS);
 
   float eps = 0.0f;
   for (size_t i = 0; i < a.size(); ++i) {
@@ -46,78 +46,78 @@ static float RunAndCheck(cl_kernel kernel, cl_command_queue queue,
                          const std::vector<float>& b,
                          std::vector<float>& c,
                          unsigned size, float expected_result) {
-  PHPROF_ASSERT(kernel != nullptr && queue != nullptr);
+  ASSERT(kernel != nullptr && queue != nullptr);
 
-  PHPROF_ASSERT(size > 0);
-  PHPROF_ASSERT(a.size() == size * size);
-  PHPROF_ASSERT(b.size() == size * size);
-  PHPROF_ASSERT(c.size() == size * size);
+  ASSERT(size > 0);
+  ASSERT(a.size() == size * size);
+  ASSERT(b.size() == size * size);
+  ASSERT(c.size() == size * size);
 
   cl_int status = CL_SUCCESS;
   cl_context context = utils::cl::GetContext(kernel);
-  PHPROF_ASSERT(context != nullptr);
+  ASSERT(context != nullptr);
 
   cl_mem dev_a = clCreateBuffer(context, CL_MEM_READ_ONLY,
                                 a.size() * sizeof(float),
                                 nullptr, &status);
-  PHPROF_ASSERT(status == CL_SUCCESS && dev_a != nullptr);
+  ASSERT(status == CL_SUCCESS && dev_a != nullptr);
   cl_mem dev_b = clCreateBuffer(context, CL_MEM_READ_ONLY,
                                 b.size() * sizeof(float),
                                 nullptr, &status);
-  PHPROF_ASSERT(status == CL_SUCCESS && dev_b != nullptr);
+  ASSERT(status == CL_SUCCESS && dev_b != nullptr);
   cl_mem dev_c = clCreateBuffer(context, CL_MEM_WRITE_ONLY,
                                 c.size() * sizeof(float),
                                 nullptr, &status);
-  PHPROF_ASSERT(status == CL_SUCCESS && dev_c != nullptr);
+  ASSERT(status == CL_SUCCESS && dev_c != nullptr);
 
   status = clEnqueueWriteBuffer(queue, dev_a, CL_FALSE, 0,
                                 a.size() * sizeof(float),
                                 a.data(), 0, nullptr, nullptr);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
   status = clEnqueueWriteBuffer(queue, dev_b, CL_FALSE, 0,
                                 b.size() * sizeof(float),
                                 b.data(), 0, nullptr, nullptr);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
 
   status = clSetKernelArg(kernel, 0, sizeof(cl_mem), &dev_a);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
   status = clSetKernelArg(kernel, 1, sizeof(cl_mem), &dev_b);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
   status = clSetKernelArg(kernel, 2, sizeof(cl_mem), &dev_c);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
   status = clSetKernelArg(kernel, 3, sizeof(unsigned), &size);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
 
   size_t global_work_size[]{size, size};
   cl_event event = nullptr;
   status = clEnqueueNDRangeKernel(queue, kernel, 2, nullptr, global_work_size,
                                   nullptr, 0, nullptr, &event);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
   status = clFinish(queue);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
 
   status = clEnqueueReadBuffer(queue, dev_c, CL_TRUE, 0,
                                c.size() * sizeof(float),
                                c.data(), 0, nullptr, nullptr);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
 
   status = clReleaseMemObject(dev_a);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
   status = clReleaseMemObject(dev_b);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
   status = clReleaseMemObject(dev_c);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
 
   cl_ulong start = 0, end = 0;
   status = clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START,
                                    sizeof(cl_ulong), &start, nullptr);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
   status = clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END,
                                    sizeof(cl_ulong), &end, nullptr);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
 
   status = clReleaseEvent(event);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
 
   double time = static_cast<double>(end - start) / NSEC_IN_SEC;
   std::cout << "Matrix multiplication time: " << time <<
@@ -130,27 +130,27 @@ static void Compute(cl_device_id device, const std::vector<float>& a,
                     const std::vector<float>& b, std::vector<float>& c,
                     unsigned size, unsigned repeat_count,
                     float expected_result) {
-  PHPROF_ASSERT(device != nullptr);
+  ASSERT(device != nullptr);
   cl_int status = CL_SUCCESS;
 
   cl_context context = clCreateContext(nullptr, 1, &device, nullptr,
                                        nullptr, &status);
-  PHPROF_ASSERT(status == CL_SUCCESS && context != nullptr);
+  ASSERT(status == CL_SUCCESS && context != nullptr);
 
   cl_queue_properties props[] = { CL_QUEUE_PROPERTIES,
                                   CL_QUEUE_PROFILING_ENABLE, 0 };
   cl_command_queue queue = clCreateCommandQueueWithProperties(
     context, device, props, &status);
-  PHPROF_ASSERT(status == CL_SUCCESS && queue != nullptr);
+  ASSERT(status == CL_SUCCESS && queue != nullptr);
 
   cl_program program = clCreateProgramWithSource(context, 1, &kKernelSource,
                                                  nullptr, &status);
-  PHPROF_ASSERT(status == CL_SUCCESS && program != nullptr);
+  ASSERT(status == CL_SUCCESS && program != nullptr);
   status = clBuildProgram(program, 1, &device, nullptr, nullptr, nullptr);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
 
   cl_kernel kernel = clCreateKernel(program, "GEMM", &status);
-  PHPROF_ASSERT(status == CL_SUCCESS && kernel != nullptr);
+  ASSERT(status == CL_SUCCESS && kernel != nullptr);
 
   for (unsigned i = 0; i < repeat_count; ++i) {
     if (i == 0) { // Enable data collection for the first iteration
@@ -167,43 +167,40 @@ static void Compute(cl_device_id device, const std::vector<float>& a,
   }
 
   status = clReleaseKernel(kernel);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
   status = clReleaseProgram(program);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
   status = clReleaseCommandQueue(queue);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
   status = clReleaseContext(context);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
 }
 
-int main(int argc, char* argv[]) {
-  std::vector<cl_device_id> list = utils::cl::GetDeviceList(CL_DEVICE_TYPE_CPU);
+std::vector<cl_device_id> get_target_devices_list(const char* device_types) {
+  std::vector<cl_device_id> devices_list;
 
-  for (int i = 0; i < list.size(); i++) {
-    std::cout << list[i] << std::endl;
+  if (strcmp(device_types, "cpu") == 0 || strcmp(device_types, "cpugpu") == 0) {
+    cl_device_id device = utils::cl::GetIntelDevice(CL_DEVICE_TYPE_CPU);
+    if (device == nullptr) {
+      std::cout << "Unable to find target CPU device" << std::endl;
+      ASSERT(false);
+    }
+    devices_list.push_back(device);
   }
 
-  cl_device_type type = CL_DEVICE_TYPE_GPU;
-  if (argc > 1 && strcmp(argv[1], "cpu") == 0) {
-    type = CL_DEVICE_TYPE_CPU;
+  if (strcmp(device_types, "gpu") == 0 || strcmp(device_types, "cpugpu") == 0) {
+    cl_device_id device = utils::cl::GetIntelDevice(CL_DEVICE_TYPE_GPU);
+    if (device == nullptr) {
+      std::cout << "Unable to find target GPU device" << std::endl;
+      ASSERT(false);
+    }
+    devices_list.push_back(device);
   }
 
-  cl_device_id device = utils::cl::GetIntelDevice(type);
-  if (device == nullptr) {
-    std::cout << "Unable to find target device" << std::endl;
-    return 0;
-  }
+  return devices_list;
+}
 
-  unsigned size = 1024;
-  if (argc > 2) {
-    size = std::stoul(argv[2]);
-  }
-
-  unsigned repeat_count = 4;
-  if (argc > 3) {
-    repeat_count = std::stoul(argv[3]);
-  }
-
+int run_on_target_device(cl_device_id device, int size, int repeat_count) {
   std::cout << "OpenCL Matrix Multiplication (matrix size: " << size <<
     " x " << size << ", repeats " << repeat_count << " times)" << std::endl;
   std::cout << "Target device: " << utils::cl::GetDeviceName(device) <<
@@ -219,6 +216,31 @@ int main(int argc, char* argv[]) {
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<float> time = end - start;
 
-  std::cout << "Total execution time: " << time.count() << " sec" << std::endl;
+  std::cout << "Total execution time: " << time.count() << " sec"
+    << std::endl << std::endl;
+  return 0;
+}
+
+int main(int argc, char* argv[]) {
+  const char* device_types = "cpu";
+  if (argc > 1) {
+    device_types = argv[1];
+  }
+  auto target_devices_list = get_target_devices_list(device_types);
+
+  unsigned size = 1024;
+  if (argc > 2) {
+    size = std::stoul(argv[2]);
+  }
+
+  unsigned repeat_count = 4;
+  if (argc > 3) {
+    repeat_count = std::stoul(argv[3]);
+  }
+
+  for (cl_device_id device: target_devices_list) {
+    run_on_target_device(device, size, repeat_count);
+  }
+
   return 0;
 }

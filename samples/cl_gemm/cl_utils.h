@@ -1,11 +1,5 @@
-//==============================================================
-// Copyright (C) Intel Corporation
-//
-// SPDX-License-Identifier: MIT
-// =============================================================
-
-#ifndef PHPROF_UTILS_CL_UTILS_H_
-#define PHPROF_UTILS_CL_UTILS_H_
+#ifndef CL_UTILS_H_
+#define CL_UTILS_H_
 
 #include <string.h>
 
@@ -26,7 +20,7 @@ inline std::string GetDeviceVendor(cl_device_id device) {
   char vendor[MAX_STR_SIZE] = { 0 };
   cl_int status = clGetDeviceInfo(
       device, CL_DEVICE_VENDOR, MAX_STR_SIZE, vendor, nullptr);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
   return vendor;
 }
 
@@ -41,7 +35,7 @@ inline std::vector<cl_device_id> GetDeviceList(cl_device_type type) {
 
   std::vector<cl_platform_id> platform_list(platform_count, nullptr);
   status = clGetPlatformIDs(platform_count, platform_list.data(), nullptr);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
 
   std::vector<cl_device_id> result;
   for (cl_uint i = 0; i < platform_count; ++i) {
@@ -54,7 +48,7 @@ inline std::vector<cl_device_id> GetDeviceList(cl_device_type type) {
     std::vector<cl_device_id> device_list(device_count, nullptr);
     status = clGetDeviceIDs(
         platform_list[i], type, device_count, device_list.data(), nullptr);
-    PHPROF_ASSERT(status == CL_SUCCESS);
+    ASSERT(status == CL_SUCCESS);
 
     for (cl_uint j = 0; j < device_count; ++j) {
       if (GetDeviceVendor(device_list[j]).find("Intel") != std::string::npos) {
@@ -67,7 +61,7 @@ inline std::vector<cl_device_id> GetDeviceList(cl_device_type type) {
 }
 
 inline std::vector<cl_device_id> CreateSubDeviceList(cl_device_id device) {
-  PHPROF_ASSERT(device != nullptr);
+  ASSERT(device != nullptr);
 
   cl_int status = CL_SUCCESS;
   cl_device_partition_property props[] = {
@@ -77,7 +71,7 @@ inline std::vector<cl_device_id> CreateSubDeviceList(cl_device_id device) {
 
   cl_uint sub_device_count = 0;
   status = clCreateSubDevices(device, props, 0, nullptr, &sub_device_count);
-  PHPROF_ASSERT(status == CL_SUCCESS || status == CL_DEVICE_PARTITION_FAILED);
+  ASSERT(status == CL_SUCCESS || status == CL_DEVICE_PARTITION_FAILED);
 
   if (status == CL_DEVICE_PARTITION_FAILED || sub_device_count == 0) {
     return std::vector<cl_device_id>();
@@ -86,7 +80,7 @@ inline std::vector<cl_device_id> CreateSubDeviceList(cl_device_id device) {
   std::vector<cl_device_id> sub_device_list(sub_device_count);
   status = clCreateSubDevices(
       device, props, sub_device_count, sub_device_list.data(), nullptr);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
 
   return sub_device_list;
 }
@@ -95,7 +89,7 @@ inline void ReleaseSubDeviceList(
     const std::vector<cl_device_id>& sub_device_list) {
   for (auto sub_device : sub_device_list) {
     cl_int status = clReleaseDevice(sub_device);
-    PHPROF_ASSERT(status == CL_SUCCESS);
+    ASSERT(status == CL_SUCCESS);
   }
 }
 
@@ -114,25 +108,25 @@ inline cl_device_id GetIntelDevice(cl_device_type type) {
 }
 
 inline cl_device_id GetDeviceParent(cl_device_id device) {
-  PHPROF_ASSERT(device != nullptr);
+  ASSERT(device != nullptr);
 
   cl_device_id parent = nullptr;
   cl_int status = clGetDeviceInfo(
       device, CL_DEVICE_PARENT_DEVICE, sizeof(cl_device_id), &parent, nullptr);
-  PHPROF_ASSERT(status != CL_SUCCESS);
+  ASSERT(status != CL_SUCCESS);
 
   return parent;
 }
 
 inline std::string GetKernelName(cl_kernel kernel, bool demangle = false) {
-  PHPROF_ASSERT(kernel != nullptr);
+  ASSERT(kernel != nullptr);
 
   char name[MAX_STR_SIZE] = { 0 };
   cl_int status = CL_SUCCESS;
 
   status = clGetKernelInfo(
       kernel, CL_KERNEL_FUNCTION_NAME, MAX_STR_SIZE, name, nullptr);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
 
   if (demangle) {
     return utils::Demangle(name);
@@ -141,62 +135,62 @@ inline std::string GetKernelName(cl_kernel kernel, bool demangle = false) {
 }
 
 inline std::string GetDeviceName(cl_device_id device) {
-  PHPROF_ASSERT(device != nullptr);
+  ASSERT(device != nullptr);
 
   char name[MAX_STR_SIZE] = { 0 };
   cl_int status = clGetDeviceInfo(
       device, CL_DEVICE_NAME, MAX_STR_SIZE, name, nullptr);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
 
   return name;
 }
 
 inline cl_device_type GetDeviceType(cl_device_id device) {
-  PHPROF_ASSERT(device != nullptr);
+  ASSERT(device != nullptr);
 
   cl_device_type type = CL_DEVICE_TYPE_ALL;
   cl_int status = clGetDeviceInfo(
       device, CL_DEVICE_TYPE, sizeof(type), &type, nullptr);
-  PHPROF_ASSERT(status == CL_SUCCESS);
-  PHPROF_ASSERT(type != CL_DEVICE_TYPE_ALL);
+  ASSERT(status == CL_SUCCESS);
+  ASSERT(type != CL_DEVICE_TYPE_ALL);
 
   return type;
 }
 
 inline cl_program GetProgram(cl_kernel kernel) {
-  PHPROF_ASSERT(kernel != nullptr);
+  ASSERT(kernel != nullptr);
 
   cl_int status = CL_SUCCESS;
   cl_program program = nullptr;
   
   status = clGetKernelInfo(kernel, CL_KERNEL_PROGRAM, sizeof(cl_program),
                            &program, nullptr);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
 
   return program;
 }
 
 inline cl_context GetContext(cl_kernel kernel) {
-  PHPROF_ASSERT(kernel != nullptr);
+  ASSERT(kernel != nullptr);
 
   cl_int status = CL_SUCCESS;
   cl_context context = nullptr;
   
   status = clGetKernelInfo(kernel, CL_KERNEL_CONTEXT, sizeof(cl_context),
                            &context, nullptr);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
 
   return context;
 }
 
 inline std::vector<cl_device_id> GetDeviceList(cl_program program) {
-  PHPROF_ASSERT(program != nullptr);
+  ASSERT(program != nullptr);
 
   cl_int status = CL_SUCCESS;
   cl_uint device_count = 0;
   status = clGetProgramInfo(program, CL_PROGRAM_NUM_DEVICES, sizeof(cl_uint),
                             &device_count, nullptr);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
   if (device_count == 0) {
     return std::vector<cl_device_id>();
   }
@@ -205,7 +199,7 @@ inline std::vector<cl_device_id> GetDeviceList(cl_program program) {
   status = clGetProgramInfo(program, CL_PROGRAM_DEVICES,
                             device_count * sizeof(cl_device_id),
                             device_list.data(), nullptr);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
 
   return device_list;
 }
@@ -232,8 +226,8 @@ inline cl_queue_properties* EnableQueueProfiling(
       // increase by 2 to always check even elements in properties list
       props_count+=2;
     }
-    PHPROF_ASSERT(!(props_count&1));
-    PHPROF_ASSERT(props[props_count] == 0);
+    ASSERT(!(props_count&1));
+    ASSERT(props[props_count] == 0);
 
     if (queue_props_id >= 0 && queue_props_id + 1 < props_count) {
       props_with_prof = new cl_queue_properties[props_count + 1];
@@ -262,7 +256,7 @@ inline bool CheckExtension(cl_device_id device, const char* extension) {
 
   size_t size = 0;
   status = clGetDeviceInfo(device, CL_DEVICE_EXTENSIONS, 0, nullptr, &size);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
 
   if (size == 0) {
     return false;
@@ -271,7 +265,7 @@ inline bool CheckExtension(cl_device_id device, const char* extension) {
   std::vector<char> buffer(size);
   status = clGetDeviceInfo(
       device, CL_DEVICE_EXTENSIONS, size, buffer.data(), nullptr);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
 
   std::string extensions(buffer.begin(), buffer.end());
   if (extensions.find(extension) != std::string::npos) {
@@ -282,7 +276,7 @@ inline bool CheckExtension(cl_device_id device, const char* extension) {
 }
 
 inline size_t GetKernelSimdWidth(cl_device_id device, cl_kernel kernel) {
-  PHPROF_ASSERT(device != nullptr && kernel != nullptr);
+  ASSERT(device != nullptr && kernel != nullptr);
   cl_int status = CL_SUCCESS;
 
   if (!CheckExtension(device, "cl_intel_subgroups")) {
@@ -298,14 +292,14 @@ inline size_t GetKernelSimdWidth(cl_device_id device, cl_kernel kernel) {
   cl_platform_id platform = nullptr;
   status = clGetDeviceInfo(
       device, CL_DEVICE_PLATFORM, sizeof(cl_platform_id), &platform, nullptr);
-  PHPROF_ASSERT(status == CL_SUCCESS);
-  PHPROF_ASSERT(platform != nullptr);
+  ASSERT(status == CL_SUCCESS);
+  ASSERT(platform != nullptr);
 
   clGetKernelSubGroupInfoKHR func =
     reinterpret_cast<clGetKernelSubGroupInfoKHR>(
         clGetExtensionFunctionAddressForPlatform(
             platform, "clGetKernelSubGroupInfoKHR"));
-  PHPROF_ASSERT(func != nullptr);
+  ASSERT(func != nullptr);
 
   size_t local_size[3]{0, 0, 0};
 
@@ -313,54 +307,54 @@ inline size_t GetKernelSimdWidth(cl_device_id device, cl_kernel kernel) {
   status = func(
       kernel, device, CL_KERNEL_MAX_SUB_GROUP_SIZE_FOR_NDRANGE_KHR,
       sizeof(size_t[3]), local_size, sizeof(size_t), &simd_width, nullptr);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
 
   return simd_width;
 }
 
 inline cl_command_queue GetCommandQueue(cl_event event) {
-  PHPROF_ASSERT(event != nullptr);
+  ASSERT(event != nullptr);
 
   cl_int status = CL_SUCCESS;
   cl_command_queue queue = nullptr;
   status = clGetEventInfo(event, CL_EVENT_COMMAND_QUEUE,
                           sizeof(cl_command_queue), &queue, nullptr);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
 
   return queue;
 }
 
 inline cl_device_id GetDevice(cl_command_queue queue) {
-  PHPROF_ASSERT(queue != nullptr);
+  ASSERT(queue != nullptr);
 
   cl_int status = CL_SUCCESS;
   cl_device_id device = nullptr;
   status = clGetCommandQueueInfo(queue, CL_QUEUE_DEVICE,
                                  sizeof(cl_device_id), &device, nullptr);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
 
   return device;
 }
 
 inline cl_ulong GetEventTimestamp(cl_event event, cl_profiling_info info) {
-  PHPROF_ASSERT(event != nullptr);
+  ASSERT(event != nullptr);
 
   cl_int status = CL_SUCCESS;
   cl_ulong start = 0;
 
   status = clGetEventProfilingInfo(
       event, info, sizeof(cl_ulong), &start, nullptr);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
   return start;
 }
 
 inline cl_int GetEventStatus(cl_event event) {
-  PHPROF_ASSERT(event != nullptr);
+  ASSERT(event != nullptr);
   cl_int event_status = CL_QUEUED;
   cl_int status = clGetEventInfo(
       event, CL_EVENT_COMMAND_EXECUTION_STATUS,
       sizeof(cl_int), &event_status, nullptr);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
   return event_status;
 }
 
@@ -368,12 +362,12 @@ inline void GetTimestamps(
     cl_device_id device,
     cl_ulong* host_timestamp,
     cl_ulong* device_timestamp) {
-  PHPROF_ASSERT(device != nullptr);
-  PHPROF_ASSERT(host_timestamp != nullptr);
-  PHPROF_ASSERT(device_timestamp != nullptr);
+  ASSERT(device != nullptr);
+  ASSERT(host_timestamp != nullptr);
+  ASSERT(device_timestamp != nullptr);
   cl_int status = clGetDeviceAndHostTimer(
       device, device_timestamp, host_timestamp);
-  PHPROF_ASSERT(status == CL_SUCCESS);
+  ASSERT(status == CL_SUCCESS);
 #if defined(__gnu_linux__)
   if (GetDeviceType(device) == CL_DEVICE_TYPE_CPU) {
     *host_timestamp = utils::ConvertClockMonotonicToRaw(*host_timestamp);
@@ -514,4 +508,4 @@ inline const char* GetErrorString(cl_int error) {
 } // namespace cl
 } // namespace utils
 
-#endif // PHPROF_UTILS_CL_UTILS_H_
+#endif // CL_UTILS_H_

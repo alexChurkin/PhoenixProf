@@ -4,8 +4,8 @@
 // SPDX-License-Identifier: MIT
 // =============================================================
 
-#ifndef PHPROF_UTILS_UTILS_H_
-#define PHPROF_UTILS_UTILS_H_
+#ifndef UTILS_H_
+#define UTILS_H_
 
 #if defined(_WIN32)
 #include <windows.h>
@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-#include "phoenixprof_assert.h"
+#include "assert.h"
 
 #ifdef _WIN32
 #define PTI_EXPORT __declspec(dllexport)
@@ -82,7 +82,7 @@ struct ComparatorPciAddress {
 inline uint64_t GetTime(clockid_t id) {
   timespec ts{0};
   int status = clock_gettime(id, &ts);
-  PHPROF_ASSERT(status == 0);
+  ASSERT(status == 0);
   return ts.tv_sec * NSEC_IN_SEC + ts.tv_nsec;
 }
 
@@ -97,7 +97,7 @@ inline uint64_t ConvertClockMonotonicToRaw(uint64_t clock_monotonic) {
 #endif
 
 inline std::string GetFilePath(const std::string& filename) {
-  PHPROF_ASSERT(!filename.empty());
+  ASSERT(!filename.empty());
 
   size_t pos = filename.find_last_of("/\\");
   if (pos == std::string::npos) {
@@ -111,10 +111,10 @@ inline std::string GetExecutablePath() {
   char buffer[MAX_STR_SIZE] = { 0 };
 #if defined(_WIN32)
   DWORD status = GetModuleFileNameA(nullptr, buffer, MAX_STR_SIZE);
-  PHPROF_ASSERT(status > 0);
+  ASSERT(status > 0);
 #else
   ssize_t status = readlink("/proc/self/exe", buffer, MAX_STR_SIZE);
-  PHPROF_ASSERT(status > 0);
+  ASSERT(status > 0);
 #endif
   return GetFilePath(buffer);
 }
@@ -123,10 +123,10 @@ inline std::string GetExecutableName() {
   char buffer[MAX_STR_SIZE] = { 0 };
 #if defined(_WIN32)
   DWORD status = GetModuleFileNameA(nullptr, buffer, MAX_STR_SIZE);
-  PHPROF_ASSERT(status > 0);
+  ASSERT(status > 0);
 #else
   ssize_t status = readlink("/proc/self/exe", buffer, MAX_STR_SIZE);
-  PHPROF_ASSERT(status > 0);
+  ASSERT(status > 0);
 #endif
   std::string path(buffer);
   return path.substr(path.find_last_of("/\\") + 1);
@@ -152,8 +152,8 @@ inline std::vector<uint8_t> LoadBinaryFile(const std::string& path) {
 }
 
 inline void SetEnv(const char* name, const char* value) {
-  PHPROF_ASSERT(name != nullptr);
-  PHPROF_ASSERT(value != nullptr);
+  ASSERT(name != nullptr);
+  ASSERT(value != nullptr);
 
   int status = 0;
 #if defined(_WIN32)
@@ -162,15 +162,15 @@ inline void SetEnv(const char* name, const char* value) {
 #else
   status = setenv(name, value, 1);
 #endif
-  PHPROF_ASSERT(status == 0);
+  ASSERT(status == 0);
 }
 
 inline std::string GetEnv(const char* name) {
-  PHPROF_ASSERT(name != nullptr);
+  ASSERT(name != nullptr);
 #if defined(_WIN32)
   char* value = nullptr;
   errno_t status = _dupenv_s(&value, nullptr, name);
-  PHPROF_ASSERT(status == 0);
+  ASSERT(status == 0);
   if (value == nullptr) {
     return std::string();
   }
@@ -211,9 +211,9 @@ inline uint64_t GetSystemTime() {
   LARGE_INTEGER ticks{{0}};
   LARGE_INTEGER frequency{{0}};
   BOOL status = QueryPerformanceFrequency(&frequency);
-  PHPROF_ASSERT(status != 0);
+  ASSERT(status != 0);
   status = QueryPerformanceCounter(&ticks);
-  PHPROF_ASSERT(status != 0);
+  ASSERT(status != 0);
   return ticks.QuadPart * (NSEC_IN_SEC / frequency.QuadPart);
 #else
   return GetTime(CLOCK_MONOTONIC_RAW);
@@ -250,4 +250,4 @@ inline size_t UpperBound(const std::vector<uint64_t>& data, uint64_t value) {
 
 } // namespace utils
 
-#endif // PHPROF_UTILS_UTILS_H_
+#endif // UTILS_H_

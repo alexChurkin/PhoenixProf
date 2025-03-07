@@ -1,5 +1,5 @@
-#ifndef PHPROF_UTILS_DEMANGLE_H_
-#define PHPROF_UTILS_DEMANGLE_H_
+#ifndef UTILS_DEMANGLE_H_
+#define UTILS_DEMANGLE_H_
 
 #if __has_include(<cxxabi.h>)
 #define HAVE_CXXABI 1
@@ -10,12 +10,12 @@
 #endif
 #include <string>
 
-#include "phoenixprof_assert.h"
+#include "assert.h"
 
 namespace utils {
 
 static inline std::string Demangle(const char* name) {
-  PHPROF_ASSERT(name != nullptr);
+  ASSERT(name != nullptr);
 
 #if HAVE_CXXABI
   int status = 0;
@@ -42,4 +42,4 @@ static inline std::string Demangle(const char* name) {
 
 #undef HAVE_CXXABI
 
-#endif // PHPROF_UTILS_DEMANGLE_H_
+#endif // UTILS_DEMANGLE_H_

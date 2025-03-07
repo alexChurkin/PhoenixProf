@@ -4,8 +4,8 @@
 // SPDX-License-Identifier: MIT
 // =============================================================
 
-#ifndef PHPROF_UTILS_PHPROF_ASSERT_H_
-#define PHPROF_UTILS_PHPROF_ASSERT_H_
+#ifndef ASSERT_H_
+#define ASSERT_H_
 
 #ifdef NDEBUG
 #undef NDEBUG
@@ -15,6 +15,6 @@
 #include <assert.h>
 #endif
 
-#define PHPROF_ASSERT(X) assert(X)
+#define ASSERT(X) assert(X)
 
-#endif // PHPROF_UTILS_PHPROF_ASSERT_H_
+#endif // ASSERT_H_
