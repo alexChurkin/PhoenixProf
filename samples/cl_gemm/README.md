@@ -37,7 +37,7 @@ make
 ```
 Use this command line to run the application:
 ```sh
-./cl_gemm [cpu|gpu] [matrix_size] [repeat_count]
+./cl_gemm [cpu|gpu|cpugpu] [matrix_size] [repeat_count]
 ```
 ### Windows
 Use Microsoft* Visual Studio x64 command prompt to run the following commands and build the sample:
@@ -50,5 +50,5 @@ nmake
 ```
 Use this command line to run the application:
 ```sh
-cl_gemm.exe [cpu|gpu] [matrix_size] [repeats_count]
+cl_gemm.exe [cpu|gpu|cpugpu] [matrix_size] [repeats_count]
 ```
