@@ -23,9 +23,9 @@
 #include "utils_assert.h"
 
 #ifdef _WIN32
-#define PTI_EXPORT __declspec(dllexport)
+#define PHPROF_EXPORT __declspec(dllexport)
 #else
-#define PTI_EXPORT __attribute__ ((visibility ("default")))
+#define PHPROF_EXPORT __attribute__ ((visibility ("default")))
 #endif
 
 #define STRINGIFY(x) #x

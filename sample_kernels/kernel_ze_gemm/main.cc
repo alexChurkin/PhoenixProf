@@ -226,7 +226,7 @@ static void Compute(ze_device_handle_t device,
 
   for (unsigned i = 0; i < repeat_count; ++i) {
     if (i == 0) { // Enable data collection for the first iteration
-      utils::SetEnv("PTI_ENABLE_COLLECTION", "1");
+      utils::SetEnv("PHPROF_ENABLE_COLLECTION", "1");
     }
 
     float eps = RunAndCheck(kernel, device, context, a, b, c,
@@ -235,7 +235,7 @@ static void Compute(ze_device_handle_t device,
       "CORRECT with accuracy: " << eps << std::endl;
 
     if (i == 0) { // Disable data collection for the rest iterations
-      utils::SetEnv("PTI_ENABLE_COLLECTION", "");
+      utils::SetEnv("PHPROF_ENABLE_COLLECTION", "");
     }
   }
 

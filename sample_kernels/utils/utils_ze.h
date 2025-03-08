@@ -110,7 +110,7 @@ inline ze_driver_handle_t GetGpuDriver() {
     return nullptr;
   }
 
-  std::string value = utils::GetEnv("PTI_DEVICE_ID");
+  std::string value = utils::GetEnv("DEVICE_ID");
   uint32_t device_id = value.empty() ? 0 : std::stoul(value);
   ASSERT(device_id >= 0 && device_id < driver_list.size());
   return driver_list[device_id];
@@ -134,7 +134,7 @@ inline ze_device_handle_t GetGpuDevice() {
     return nullptr;
   }
 
-  std::string value = utils::GetEnv("PTI_DEVICE_ID");
+  std::string value = utils::GetEnv("DEVICE_ID");
   uint32_t device_id = value.empty() ? 0 : std::stoul(value);
   ASSERT(device_id >= 0 && device_id < device_list.size());
 
@@ -144,7 +144,7 @@ inline ze_device_handle_t GetGpuDevice() {
     return device_list[device_id];
   }
 
-  value = utils::GetEnv("PTI_SUB_DEVICE_ID");
+  value = utils::GetEnv("SUB_DEVICE_ID");
   if (value.empty()) {
     return device_list[device_id];
   }
@@ -211,7 +211,7 @@ inline zet_metric_group_handle_t FindMetricGroup(
     ze_device_handle_t device, std::string name,
     zet_metric_group_sampling_type_flag_t type) {
   ASSERT(device != nullptr);
-  
+
   ze_result_t status = ZE_RESULT_SUCCESS;
   uint32_t group_count = 0;
   status = zetMetricGroupGet(device, &group_count, nullptr);

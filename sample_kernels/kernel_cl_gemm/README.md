@@ -29,7 +29,7 @@ Total execution time: 0.0264119 sec
 ### Linux
 Run the following commands to build the sample:
 ```sh
-cd <pti>/samples/cl_gemm
+cd <phoenixprof>/samples/cl_gemm
 mkdir build
 cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
@@ -42,7 +42,7 @@ Use this command line to run the application:
 ### Windows
 Use Microsoft* Visual Studio x64 command prompt to run the following commands and build the sample:
 ```sh
-cd <pti>\samples\cl_gemm
+cd <phoenixprof>\samples\cl_gemm
 mkdir build
 cd build
 cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_LIBRARY_PATH=<opencl_icd_lib_path> ..

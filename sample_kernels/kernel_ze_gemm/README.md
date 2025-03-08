@@ -14,7 +14,7 @@ Matrix multiplication time: 0.0723689 sec
 Results are CORRECT with accuracy: 4.90573e-06
 Total execution time: 0.357162 sec
 ```
-To run application on target device and sub-device one can specify `PTI_DEVICE_ID` and `PTI_SUB_DEVICE_ID` environment variables.
+To run application on target device and sub-device one can specify `DEVICE_ID` and `SUB_DEVICE_ID` environment variables.
 
 ## Supported OS
 - Linux
@@ -31,7 +31,7 @@ To run application on target device and sub-device one can specify `PTI_DEVICE_I
 ### Linux
 Run the following commands to build the sample:
 ```sh
-cd <pti>/samples/ze_gemm
+cd <phoenixprof>/samples/ze_gemm
 mkdir build
 cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
@@ -44,7 +44,7 @@ Use this command line to run the application:
 ### Windows
 Use Microsoft* Visual Studio x64 command prompt to run the following commands and build the sample:
 ```sh
-cd <pti>\samples\ze_gemm
+cd <phoenixprof>\samples\ze_gemm
 mkdir build
 cd build
 cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_LIBRARY_PATH=<level_zero_loader>\lib -DCMAKE_INCLUDE_PATH=<level_zero_loader>\include ..
