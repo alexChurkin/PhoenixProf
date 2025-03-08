@@ -168,7 +168,7 @@ inline cl_program GetProgram(cl_kernel kernel) {
 
   cl_int status = CL_SUCCESS;
   cl_program program = nullptr;
-  
+
   status = clGetKernelInfo(kernel, CL_KERNEL_PROGRAM, sizeof(cl_program),
                            &program, nullptr);
   ASSERT(status == CL_SUCCESS);
@@ -181,7 +181,7 @@ inline cl_context GetContext(cl_kernel kernel) {
 
   cl_int status = CL_SUCCESS;
   cl_context context = nullptr;
-  
+
   status = clGetKernelInfo(kernel, CL_KERNEL_CONTEXT, sizeof(cl_context),
                            &context, nullptr);
   ASSERT(status == CL_SUCCESS);
@@ -222,13 +222,13 @@ inline cl_queue_properties* EnableQueueProfiling(
   } else {
     int queue_props_id = -1;
     int props_count = 0;
-    
+
     // the end of the properties list is marked by 0 on the last even index
     while (props[props_count] != 0) {
       if (props[props_count] == CL_QUEUE_PROPERTIES) {
         queue_props_id = props_count;
       }
-      
+
       // increase by 2 to always check even elements in properties list
       props_count+=2;
     }
