@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-#include "assert.h"
+#include "utils_assert.h"
 
 #ifdef _WIN32
 #define PTI_EXPORT __declspec(dllexport)

@@ -7,6 +7,8 @@ SetCompilerFlags()
 SetBuildType()
 
 add_executable(cl_gemm main.cc)
+target_include_directories(cl_gemm
+  PRIVATE "${PROJECT_SOURCE_DIR}/../utils")
 if(CMAKE_INCLUDE_PATH)
   target_include_directories(cl_gemm
     PUBLIC "${CMAKE_INCLUDE_PATH}")

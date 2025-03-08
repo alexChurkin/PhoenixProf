@@ -1,5 +1,11 @@
-#ifndef CL_UTILS_H_
-#define CL_UTILS_H_
+//==============================================================
+// Copyright (C) Intel Corporation
+//
+// SPDX-License-Identifier: MIT
+// =============================================================
+
+#ifndef UTILS_CL_H_
+#define UTILS_CL_H_
 
 #include <string.h>
 
@@ -8,7 +14,7 @@
 
 #include <CL/cl.h>
 
-#include "demangle.h"
+#include "utils_demangle.h"
 #include "utils.h"
 
 #define CL_KERNEL_MAX_SUB_GROUP_SIZE_FOR_NDRANGE_KHR 0x2033
@@ -508,4 +514,4 @@ inline const char* GetErrorString(cl_int error) {
 } // namespace cl
 } // namespace utils
 
-#endif // CL_UTILS_H_
+#endif // UTILS_CL_H_

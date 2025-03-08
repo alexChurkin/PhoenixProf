@@ -1,3 +1,9 @@
+//==============================================================
+// Copyright (C) Intel Corporation
+//
+// SPDX-License-Identifier: MIT
+// =============================================================
+
 #ifndef UTILS_DEMANGLE_H_
 #define UTILS_DEMANGLE_H_
 
@@ -10,7 +16,7 @@
 #endif
 #include <string>
 
-#include "assert.h"
+#include "utils_assert.h"
 
 namespace utils {
 
