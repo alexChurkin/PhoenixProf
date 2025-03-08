@@ -17,6 +17,7 @@
 #define A_VALUE 0.128f
 #define B_VALUE 0.256f
 #define MAX_EPS 1.0e-4f
+#define NSEC_IN_SEC  1000000000
 
 const char* kKernelSource =
   "__kernel void GEMM(__global float* a, __global float* b,\n"
@@ -153,17 +154,9 @@ static void Compute(cl_device_id device, const std::vector<float>& a,
   ASSERT(status == CL_SUCCESS && kernel != nullptr);
 
   for (unsigned i = 0; i < repeat_count; ++i) {
-    if (i == 0) { // Enable data collection for the first iteration
-      utils::SetEnv("PHPROF_ENABLE_COLLECTION", "1");
-    }
-
     float eps = RunAndCheck(kernel, queue, a, b, c, size, expected_result);
     std::cout << "Results are " << ((eps < MAX_EPS) ? "" : "IN") <<
       "CORRECT with accuracy: " << eps << std::endl;
-
-    if (i == 0) { // Disable data collection for the rest iterations
-      utils::SetEnv("PHPROF_ENABLE_COLLECTION", "");
-    }
   }
 
   status = clReleaseKernel(kernel);

@@ -9,15 +9,57 @@
 
 #include <chrono>
 #include <iostream>
+#include <fstream>
 
 #include "utils_ze.h"
-#include "utils.h"
 
 #define ALIGN 64
 
 #define A_VALUE 0.128f
 #define B_VALUE 0.256f
 #define MAX_EPS 1.0e-4f
+
+inline std::string GetFilePath(const std::string& filename) {
+  ASSERT(!filename.empty());
+
+  size_t pos = filename.find_last_of("/\\");
+  if (pos == std::string::npos) {
+    return "";
+  }
+
+  return filename.substr(0, pos + 1);
+}
+
+inline std::string GetExecutablePath() {
+  char buffer[MAX_STR_SIZE] = { 0 };
+#if defined(_WIN32)
+  DWORD status = GetModuleFileNameA(nullptr, buffer, MAX_STR_SIZE);
+  ASSERT(status > 0);
+#else
+  ssize_t status = readlink("/proc/self/exe", buffer, MAX_STR_SIZE);
+  ASSERT(status > 0);
+#endif
+  return GetFilePath(buffer);
+}
+
+inline std::vector<uint8_t> LoadBinaryFile(const std::string& path) {
+  std::vector<uint8_t> binary;
+  std::ifstream stream(path, std::ios::in | std::ios::binary);
+  if (!stream.good()) {
+    return binary;
+  }
+
+  stream.seekg(0, std::ifstream::end);
+  size_t size = stream.tellg();
+  stream.seekg(0, std::ifstream::beg);
+  if (size == 0) {
+    return binary;
+  }
+
+  binary.resize(size);
+  stream.read(reinterpret_cast<char *>(binary.data()), size);
+  return binary;
+}
 
 static float Check(const std::vector<float>& a, float value) {
   ASSERT(value > MAX_EPS);
@@ -199,8 +241,8 @@ static void Compute(ze_device_handle_t device,
   ASSERT(size > 0 && repeat_count > 0);
 
   std::string module_name = "gemm.spv";
-  std::vector<uint8_t> binary = utils::LoadBinaryFile(
-    utils::GetExecutablePath() + module_name);
+  std::vector<uint8_t> binary = LoadBinaryFile(
+    GetExecutablePath() + module_name);
   if (binary.size() == 0) {
     std::cout << "Unable to find module " << module_name << std::endl;
     return;
@@ -225,18 +267,10 @@ static void Compute(ze_device_handle_t device,
   ASSERT(status == ZE_RESULT_SUCCESS && kernel != nullptr);
 
   for (unsigned i = 0; i < repeat_count; ++i) {
-    if (i == 0) { // Enable data collection for the first iteration
-      utils::SetEnv("PHPROF_ENABLE_COLLECTION", "1");
-    }
-
     float eps = RunAndCheck(kernel, device, context, a, b, c,
                             size, expected_result);
     std::cout << "Results are " << ((eps < MAX_EPS) ? "" : "IN") <<
       "CORRECT with accuracy: " << eps << std::endl;
-
-    if (i == 0) { // Disable data collection for the rest iterations
-      utils::SetEnv("PHPROF_ENABLE_COLLECTION", "");
-    }
   }
 
   status = zeKernelDestroy(kernel);

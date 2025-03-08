@@ -14,7 +14,6 @@
 
 #include <CL/cl.h>
 
-#include "utils_demangle.h"
 #include "utils.h"
 
 #define CL_KERNEL_MAX_SUB_GROUP_SIZE_FOR_NDRANGE_KHR 0x2033
@@ -124,22 +123,6 @@ inline cl_device_id GetDeviceParent(cl_device_id device) {
   return parent;
 }
 
-inline std::string GetKernelName(cl_kernel kernel, bool demangle = false) {
-  ASSERT(kernel != nullptr);
-
-  char name[MAX_STR_SIZE] = { 0 };
-  cl_int status = CL_SUCCESS;
-
-  status = clGetKernelInfo(
-      kernel, CL_KERNEL_FUNCTION_NAME, MAX_STR_SIZE, name, nullptr);
-  ASSERT(status == CL_SUCCESS);
-
-  if (demangle) {
-    return utils::Demangle(name);
-  }
-  return name;
-}
-
 inline std::string GetDeviceName(cl_device_id device) {
   ASSERT(device != nullptr);
 
@@ -210,114 +193,6 @@ inline std::vector<cl_device_id> GetDeviceList(cl_program program) {
   return device_list;
 }
 
-inline cl_queue_properties* EnableQueueProfiling(
-    const cl_queue_properties* props) {
-  cl_queue_properties* props_with_prof = nullptr;
-
-  if (props == nullptr) {
-    props_with_prof = new cl_queue_properties[3];
-    props_with_prof[0] = CL_QUEUE_PROPERTIES;
-    props_with_prof[1] = CL_QUEUE_PROFILING_ENABLE;
-    props_with_prof[2] = 0;
-  } else {
-    int queue_props_id = -1;
-    int props_count = 0;
-
-    // the end of the properties list is marked by 0 on the last even index
-    while (props[props_count] != 0) {
-      if (props[props_count] == CL_QUEUE_PROPERTIES) {
-        queue_props_id = props_count;
-      }
-
-      // increase by 2 to always check even elements in properties list
-      props_count+=2;
-    }
-    ASSERT(!(props_count&1));
-    ASSERT(props[props_count] == 0);
-
-    if (queue_props_id >= 0 && queue_props_id + 1 < props_count) {
-      props_with_prof = new cl_queue_properties[props_count + 1];
-      for (int i = 0; i < props_count; ++i) {
-        props_with_prof[i] = props[i];
-      }
-      props_with_prof[queue_props_id + 1] |=
-        static_cast<unsigned long>(CL_QUEUE_PROFILING_ENABLE);
-      props_with_prof[props_count] = 0;
-    } else {
-      props_with_prof = new cl_queue_properties[props_count + 3];
-      for (int i = 0; i < props_count; ++i) {
-        props_with_prof[i] = props[i];
-      }
-      props_with_prof[props_count] = CL_QUEUE_PROPERTIES;
-      props_with_prof[props_count + 1] = CL_QUEUE_PROFILING_ENABLE;
-      props_with_prof[props_count + 2] = 0;
-    }
-  }
-
-  return props_with_prof;
-}
-
-inline bool CheckExtension(cl_device_id device, const char* extension) {
-  cl_int status = CL_SUCCESS;
-
-  size_t size = 0;
-  status = clGetDeviceInfo(device, CL_DEVICE_EXTENSIONS, 0, nullptr, &size);
-  ASSERT(status == CL_SUCCESS);
-
-  if (size == 0) {
-    return false;
-  }
-
-  std::vector<char> buffer(size);
-  status = clGetDeviceInfo(
-      device, CL_DEVICE_EXTENSIONS, size, buffer.data(), nullptr);
-  ASSERT(status == CL_SUCCESS);
-
-  std::string extensions(buffer.begin(), buffer.end());
-  if (extensions.find(extension) != std::string::npos) {
-    return true;
-  }
-
-  return false;
-}
-
-inline size_t GetKernelSimdWidth(cl_device_id device, cl_kernel kernel) {
-  ASSERT(device != nullptr && kernel != nullptr);
-  cl_int status = CL_SUCCESS;
-
-  if (!CheckExtension(device, "cl_intel_subgroups")) {
-    return 0;
-  }
-
-  typedef cl_int (*clGetKernelSubGroupInfoKHR)(
-      cl_kernel kernel, cl_device_id device,
-      cl_kernel_sub_group_info param_name, size_t input_value_size,
-      const void* input_value, size_t param_value_size,
-      void* param_value, size_t* param_value_size_ret);
-
-  cl_platform_id platform = nullptr;
-  status = clGetDeviceInfo(
-      device, CL_DEVICE_PLATFORM, sizeof(cl_platform_id), &platform, nullptr);
-  ASSERT(status == CL_SUCCESS);
-  ASSERT(platform != nullptr);
-
-  clGetKernelSubGroupInfoKHR func =
-    reinterpret_cast<clGetKernelSubGroupInfoKHR>(
-        clGetExtensionFunctionAddressForPlatform(
-            platform, "clGetKernelSubGroupInfoKHR"));
-  ASSERT(func != nullptr);
-
-  size_t local_size[3]{0, 0, 0};
-
-  size_t simd_width = 0;
-  status = func(
-      kernel, device, CL_KERNEL_MAX_SUB_GROUP_SIZE_FOR_NDRANGE_KHR,
-      sizeof(size_t[3]), local_size, sizeof(size_t), &simd_width, nullptr);
-  ASSERT(status == CL_SUCCESS);
-
-  return simd_width;
-}
-
 inline cl_command_queue GetCommandQueue(cl_event event) {
   ASSERT(event != nullptr);
 
@@ -328,57 +203,6 @@ inline cl_command_queue GetCommandQueue(cl_event event) {
   ASSERT(status == CL_SUCCESS);
 
   return queue;
-}
-
-inline cl_device_id GetDevice(cl_command_queue queue) {
-  ASSERT(queue != nullptr);
-
-  cl_int status = CL_SUCCESS;
-  cl_device_id device = nullptr;
-  status = clGetCommandQueueInfo(queue, CL_QUEUE_DEVICE,
-                                 sizeof(cl_device_id), &device, nullptr);
-  ASSERT(status == CL_SUCCESS);
-
-  return device;
-}
-
-inline cl_ulong GetEventTimestamp(cl_event event, cl_profiling_info info) {
-  ASSERT(event != nullptr);
-
-  cl_int status = CL_SUCCESS;
-  cl_ulong start = 0;
-
-  status = clGetEventProfilingInfo(
-      event, info, sizeof(cl_ulong), &start, nullptr);
-  ASSERT(status == CL_SUCCESS);
-  return start;
-}
-
-inline cl_int GetEventStatus(cl_event event) {
-  ASSERT(event != nullptr);
-  cl_int event_status = CL_QUEUED;
-  cl_int status = clGetEventInfo(
-      event, CL_EVENT_COMMAND_EXECUTION_STATUS,
-      sizeof(cl_int), &event_status, nullptr);
-  ASSERT(status == CL_SUCCESS);
-  return event_status;
-}
-
-inline void GetTimestamps(
-    cl_device_id device,
-    cl_ulong* host_timestamp,
-    cl_ulong* device_timestamp) {
-  ASSERT(device != nullptr);
-  ASSERT(host_timestamp != nullptr);
-  ASSERT(device_timestamp != nullptr);
-  cl_int status = clGetDeviceAndHostTimer(
-      device, device_timestamp, host_timestamp);
-  ASSERT(status == CL_SUCCESS);
-#if defined(__gnu_linux__)
-  if (GetDeviceType(device) == CL_DEVICE_TYPE_CPU) {
-    *host_timestamp = utils::ConvertClockMonotonicToRaw(*host_timestamp);
-  }
-#endif
 }
 
 inline const char* GetErrorString(cl_int error) {
