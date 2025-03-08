@@ -26,7 +26,7 @@ GetOpenCLTracingHeaders(phoenixprof_tool_lib)
 # -- Loader --
 # 1. Takes input arguments
 # 2. Loads tool library via LD_PRELOAD,
-# 3. Launches target application (passed as an argument)
+# 3. Launches target application (that was passed as an argument)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DTOOL_NAME=phoenixprof_tool_lib")
 add_executable(cl_hot_opencl "${PROJECT_SOURCE_DIR}/loader/loader.cc")
 target_include_directories(cl_hot_opencl
