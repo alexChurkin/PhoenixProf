@@ -1,0 +1,3 @@
+- Launch OpenVINO app on GPU & NPU (Linux)
+- Make OpenCL calls collector
+- Make Chrome Tracing (Perfetto) calls visualization
