@@ -7,9 +7,9 @@
 #ifndef PHOENIXPROF_SHARED_LIBRARY_H_
 #define PHOENIXPROF_SHARED_LIBRARY_H_
 
-#include <cerrno>
 #include <dlfcn.h>
 
+#include <cerrno>
 #include <string>
 #include <vector>
 
@@ -41,15 +41,14 @@ class SharedLibrary {
 #endif
   }
 
-  template<typename T> T GetSym(const char* name) {
+  template <typename T>
+  T GetSym(const char* name) {
     void* sym = nullptr;
     sym = dlsym(handle_, name);
     return reinterpret_cast<T>(sym);
   }
 
-  void* GetHandle() {
-    return handle_;
-  }
+  void* GetHandle() { return handle_; }
 
  private:
   SharedLibrary(void* handle) : handle_(handle) {}
@@ -57,4 +56,4 @@ class SharedLibrary {
   void* handle_ = nullptr;
 };
 
-#endif // PHOENIXPROF_SHARED_LIBRARY_H_
+#endif  // PHOENIXPROF_SHARED_LIBRARY_H_
