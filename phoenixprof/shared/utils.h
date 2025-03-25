@@ -12,6 +12,7 @@
 #include <unistd.h>
 
 #include <string>
+#include <vector>
 
 #define ASSERT(X) assert(X)
 
