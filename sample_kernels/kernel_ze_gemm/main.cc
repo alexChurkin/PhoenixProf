@@ -1,9 +1,3 @@
-//==============================================================
-// Copyright (C) Intel Corporation
-//
-// SPDX-License-Identifier: MIT
-// =============================================================
-
 #include <math.h>
 #include <string.h>
 
@@ -11,7 +5,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "utils_ze.h"
+#include "k_utils_ze.h"
 
 #define ALIGN 64
 

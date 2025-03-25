@@ -1,11 +1,5 @@
-//==============================================================
-// Copyright (C) Intel Corporation
-//
-// SPDX-License-Identifier: MIT
-// =============================================================
-
-#ifndef UTILS_H_
-#define UTILS_H_
+#ifndef K_UTILS_H_
+#define K_UTILS_H_
 
 #if defined(_WIN32)
 #include <windows.h>
@@ -20,7 +14,7 @@
 #include <string>
 #include <vector>
 
-#include "utils_assert.h"
+#include "k_utils_assert.h"
 
 #define MAX_STR_SIZE 1024
 
@@ -90,4 +84,4 @@ inline std::vector<uint8_t> LoadBinaryFile(const std::string& path) {
 
 } // namespace utils
 
-#endif // UTILS_H_
+#endif // K_UTILS_H_

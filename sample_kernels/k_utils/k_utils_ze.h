@@ -1,11 +1,5 @@
-//==============================================================
-// Copyright (C) Intel Corporation
-//
-// SPDX-License-Identifier: MIT
-// =============================================================
-
-#ifndef UTILS_ZE_H_
-#define UTILS_ZE_H_
+#ifndef K_UTILS_ZE_H_
+#define K_UTILS_ZE_H_
 
 #include <string.h>
 
@@ -17,7 +11,7 @@
 #include <level_zero/ze_api.h>
 #include <level_zero/zet_api.h>
 
-#include "utils.h"
+#include "k_utils.h"
 
 namespace utils {
 namespace ze {
@@ -196,4 +190,4 @@ inline ze_api_version_t GetVersion() {
 } // namespace ze
 } // namespace utils
 
-#endif // UTILS_ZE_H_
+#endif // K_UTILS_ZE_H_

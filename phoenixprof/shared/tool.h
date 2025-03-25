@@ -1,5 +1,5 @@
-#ifndef PHOENIXPROF_TOOL_H_
-#define PHOENIXPROF_TOOL_H_
+#ifndef PHPROF_TOOL_H_
+#define PHPROF_TOOL_H_
 #include "utils.h"
 
 // External Tool Interface
@@ -11,4 +11,4 @@ extern "C" void PrepareEnv();
 void StartProfiling();
 void StopProfiling();
 
-#endif  // PHOENIXPROF_TOOL_H_
+#endif  // PHPROF_TOOL_H_

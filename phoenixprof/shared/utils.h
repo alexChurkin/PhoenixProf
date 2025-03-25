@@ -1,11 +1,5 @@
-//==============================================================
-// Copyright (C) Intel Corporation
-//
-// SPDX-License-Identifier: MIT
-// =============================================================
-
-#ifndef UTILS_H_
-#define UTILS_H_
+#ifndef PHPROF_UTILS_H_
+#define PHPROF_UTILS_H_
 
 #ifdef NDEBUG
 #undef NDEBUG
@@ -67,4 +61,4 @@ inline std::string GetExecutablePath() {
 }
 }  // namespace utils
 
-#endif  // ASSERT_H_
+#endif  // PHPROF_UTILS_H_

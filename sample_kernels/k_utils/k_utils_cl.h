@@ -1,11 +1,5 @@
-//==============================================================
-// Copyright (C) Intel Corporation
-//
-// SPDX-License-Identifier: MIT
-// =============================================================
-
-#ifndef UTILS_CL_H_
-#define UTILS_CL_H_
+#ifndef K_UTILS_CL_H_
+#define K_UTILS_CL_H_
 
 #include <string.h>
 
@@ -14,7 +8,7 @@
 
 #include <CL/cl.h>
 
-#include "utils.h"
+#include "k_utils.h"
 
 #define CL_KERNEL_MAX_SUB_GROUP_SIZE_FOR_NDRANGE_KHR 0x2033
 
@@ -338,4 +332,4 @@ inline const char* GetErrorString(cl_int error) {
 } // namespace cl
 } // namespace utils
 
-#endif // UTILS_CL_H_
+#endif // K_UTILS_CL_H_

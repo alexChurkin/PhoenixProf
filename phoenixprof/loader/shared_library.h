@@ -1,11 +1,5 @@
-//==============================================================
-// Copyright (C) Intel Corporation
-//
-// SPDX-License-Identifier: MIT
-// =============================================================
-
-#ifndef PHOENIXPROF_SHARED_LIBRARY_H_
-#define PHOENIXPROF_SHARED_LIBRARY_H_
+#ifndef PHPROF_SHARED_LIBRARY_H_
+#define PHPROF_SHARED_LIBRARY_H_
 
 #include <dlfcn.h>
 
@@ -56,4 +50,4 @@ class SharedLibrary {
   void* handle_ = nullptr;
 };
 
-#endif  // PHOENIXPROF_SHARED_LIBRARY_H_
+#endif  // PHPROF_SHARED_LIBRARY_H_
