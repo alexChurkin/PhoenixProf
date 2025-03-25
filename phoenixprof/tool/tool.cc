@@ -2,6 +2,7 @@
 
 #include "cl_api_collector.h"
 #include "utils_cl.h"
+#include "chrome_tracing_generator.h"
 using namespace std;
 
 static ClApiCollector* cpu_collector = nullptr;
@@ -68,6 +69,9 @@ void StopProfiling() {
     std::cout << elem.function_name << " " << elem.start_time << " "
               << elem.end_time << endl;
   }
+
+  ChromeTracingGenerator::ExportToFile(cpu_function_calls, "cpu_trace.json");
+  ChromeTracingGenerator::ExportToFile(gpu_function_calls, "gpu_trace.json");
 
   if (cpu_collector != nullptr) {
     delete cpu_collector;

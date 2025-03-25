@@ -12,8 +12,10 @@ add_library(phoenixprof_tool SHARED
   "${PROJECT_SOURCE_DIR}/tool/tool.cc")
 target_include_directories(phoenixprof_tool
   PRIVATE "${PROJECT_SOURCE_DIR}/shared")
-  target_include_directories(phoenixprof_tool
+target_include_directories(phoenixprof_tool
   PRIVATE "${PROJECT_SOURCE_DIR}/tool/cl")
+  target_include_directories(phoenixprof_tool
+  PRIVATE "${PROJECT_SOURCE_DIR}/tool/frontend")
 if(CMAKE_INCLUDE_PATH)
   target_include_directories(phoenixprof_tool
     PUBLIC "${CMAKE_INCLUDE_PATH}")
